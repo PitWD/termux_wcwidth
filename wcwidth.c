@@ -523,6 +523,7 @@ int wcwidth(wchar_t ucs) {
 	// NOTE: created by hand, there isn't anything identifiable other than
 	// general Cf category code to identify these, and some characters in Cf
 	// category code are of non-zero width.
+        /*
         if (ucs == 0 ||
                         ucs == 0x034F ||
                         (0x200B <= ucs && ucs <= 0x200F) ||
@@ -532,10 +533,20 @@ int wcwidth(wchar_t ucs) {
                         (0x2060 <= ucs && ucs <= 0x2063)) {
                 return 0;
         }
+        */
+        if (ucs == 0 ||
+                        ucs == 0x034F ||
+                        (ucs > 0x200A && ucs < 0x2010) ||
+                        (ucs > 0x2027 && ucs < 0x202F) ||
+                        (ucs > 0x205F && ucs < 0x2064)) {
+                return 0;
+        }
 
         // C0/C1 control characters.
+        /*
         if (ucs < 32 || (0x07F <= ucs && ucs < 0x0A0)) return -1;
-
+        */
+        if (ucs < 32 || (ucs > 0x07E && ucs < 0x0A0)) return -1;
 
         // Combining characters with zero width.
         if (intable(ZERO_WIDTH, sizeof(ZERO_WIDTH)/sizeof(struct width_interval), ucs)) return 0;
