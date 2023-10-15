@@ -536,6 +536,7 @@ int wcwidth(wchar_t ucs) {
         // C0/C1 control characters.
         if (ucs < 32 || (0x07F <= ucs && ucs < 0x0A0)) return -1;
 
+
         // Combining characters with zero width.
         if (intable(ZERO_WIDTH, sizeof(ZERO_WIDTH)/sizeof(struct width_interval), ucs)) return 0;
 

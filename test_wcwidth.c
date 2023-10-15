@@ -18,7 +18,7 @@ void assertWidthIs(int expected_width, wchar_t c) {
 
 unsigned char randomByte() {
     // Seed the random number generator with the current time
-    srand(time(NULL));
+    srand(clock());
     
     // Generate a random number between 0 and 255 (inclusive)
     int randomNum = rand() % 256;
@@ -31,33 +31,37 @@ unsigned char randomByte() {
 
 void runTimeTest(void){
 	wchar_t testChar[1000000];
-	clock_t startTime;
-	clock_t stopTime;
+	
 	size_t i;
-	printf("\nStart-Randomizer:%f\n", (float)clock()/CLOCKS_PER_SEC);
+	clock_t startTimeRandom = clock();
 	for (i = 0; i < 1000000; i++){
 		testChar[i] = randomByte();
-		testChar[i] *= 256;
 	}
 	for (i = 0; i < 1000000; i++){
+		testChar[i] *= 256;
 		testChar[i] += randomByte();
+		i++;
 	}
-	printf("Stop-Randomizer:%f\n", (float)clock()/CLOCKS_PER_SEC);
+	clock_t stopTimeRandom = clock();
+	printf("\nStart Randomizer:%f\n", (float)startTimeRandom/CLOCKS_PER_SEC);
+	printf("Stop Randomizer:%f\n", (float)stopTimeRandom/CLOCKS_PER_SEC);
+	printf("%lu Randoms / Second\n", (unsigned long)(1500000/((float)(stopTimeRandom-startTimeRandom)/CLOCKS_PER_SEC)));
 
-	startTime = clock();
+	clock_t startTimeWC = clock();
 	for (i = 0; i < 1000000; i++){
 		for (size_t j = 0; j < 10; j++){
 			wcwidth(testChar[i]);
 		}
 	}
-	stopTime = clock();
-	printf("\nStart wcwidth():%f\n", (float)startTime/CLOCKS_PER_SEC);
-	printf("Stop wcwidth():%f\n", (float)stopTime/CLOCKS_PER_SEC);
-	printf("%lu wcwidth() / Second\n", (unsigned long)(10000000/((float)(stopTime-startTime)/CLOCKS_PER_SEC)));
+	clock_t stopTimeWC = clock();
+	printf("\nStart wcwidth():%f\n", (float)startTimeWC/CLOCKS_PER_SEC);
+	printf("Stop wcwidth():%f\n", (float)stopTimeWC/CLOCKS_PER_SEC);
+	printf("%lu wcwidth() / Second\n\n", (unsigned long)(10000000/((float)(stopTimeWC-startTimeWC)/CLOCKS_PER_SEC)));
 
 }
 
 int main() {
+	printf("\n");
         assertWidthIs(1, L'a');
         assertWidthIs(1, L'ö');
 
@@ -77,9 +81,12 @@ int main() {
 	assertWidthIs(2, 0x1F428); // Koala emoji.
         assertWidthIs(2, 0x231a);  // Watch emoji.
 
-	if (test_failures > 0) printf("%d tests FAILED, ", test_failures);
-	printf("%d tests OK\n", tests_run);
+	if (test_failures > 0) printf("%d (original) tests FAILED, ", test_failures);
+	printf("%d (original) tests OK\n", tests_run - test_failures);
+	
+	// Pit's Tests...
 	runTimeTest();
+
 	return (test_failures == 0) ? 0 : 1;
 }
 
