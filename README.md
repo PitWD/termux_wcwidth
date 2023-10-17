@@ -6,4 +6,4 @@ in C as a port of [wcwidth.py](https://github.com/jquast/wcwidth/blob/master/wcw
 
 Original Repository used in [Termux](https://termux.com) as part of the `libandroid-support.so` shared library.
 
-This Repository is used in [escTUI](https://github.com/PitWD/escTUI).
+This Repository is used in [escTUI](https://github.com/PitWD/escTUI). wcwidth() is CharLen() there.
